@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Card</title>
+    <script src="https://www.paypal.com/sdk/js?client-id=AcWDpLr0xSqdkl-CPS9dPZERU8oQ1DiCl-TU676xpubZfwVG_VvHX6Ee9PIDnXiJZFUT6iqWLpMn68xB&currency=GBP" onload="renderPayPalButton()"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            flex-direction: column;
+            padding: 10px;
+        }
+        .business-card {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+        }
+        .business-card img.logo {
+            width: 100%;
+            max-width: 250px;
+            margin: 10px 0;
+        }
+        .business-card p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .buttons a {
+            text-decoration: none;
+            display: inline-block;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .buttons a img {
+            width: 70%;
+            height: 70%;
+            border-radius: 50%;
+            transition: opacity 0.3s;
+        }
+        .buttons a:hover img {
+            opacity: 0.8;
+        }
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: auto;
+            max-height: 250px;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        .carousel img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+        .carousel img.active {
+            opacity: 1;
+            position: relative;
+        }
+        .paypal-container {
+            width: 100%;
+            max-width: 320px;
+            margin: 10px auto;
+            overflow-y: auto;
+            white-space: nowrap;
+        }
+        .paypal-button-container {
+            display: inline-block;
+        }
+        .amount-input {
+            width: 100%;
+            max-width: 300px;
+            height: 40px;
+            text-align: center;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="business-card">
+        <img src="Tommy logo design.png" alt="Dedicated Decor Logo" class="logo">
+        <p>Tommy Nixon - Painter & Decoration</p>
+        <div class="buttons">
+            <a href="tel:+447817216361" onclick="window.location='tel:+447817216361'" class="call"><img src="PHONF.png" alt="Call"></a>
+            <a href="mailto:Dedicateddecor182@gmail.com" onclick="window.location='mailto:Dedicateddecor182@gmail.com'" class="email"><img src="EMAIL.png" alt="Email"></a>
+            <a href="https://www.facebook.com/profile.php?id=100083012936344&rdid=bQRR2vPXXt6Ft5QW&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F18Y4ArsNoT#" onclick="window.location='https://www.facebook.com/profile.php?id=100083012936344&rdid=bQRR2vPXXt6Ft5QW&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F18Y4ArsNoT#'" class="facebook" target="_blank"><img src="FACEBOOK.png" alt="Facebook"></a>
+            <a href="https://www.instagram.com/tommy_nixon?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" onclick="window.location='https://www.instagram.com/tommy_nixon?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=='" class="instagram" target="_blank"><img src="INSTAGRAM.jpg" alt="Instagram"></a>
+        </div>
+        <div class="carousel">
+            <img src="BEDROOM.jpg" class="active">
+            <img src="GREEN WALL.jpg">
+            <img src="HOUSE.jpg">
+        </div>
+        <input type="number" id="amount" class="amount-input" placeholder="Enter amount" min="1" step="0.01">
+        <div class="paypal-container">
+            <div id="paypal-button-container" class="paypal-button-container"></div>
+        </div>
+    </div>
+
+    <script>
+        let index = 0;
+        const images = document.querySelectorAll(".carousel img");
+
+        function showImage(idx) {
+            images.forEach((img, i) => {
+                img.classList.remove("active");
+                img.style.zIndex = "0";
+            });
+            images[idx].classList.add("active");
+            images[idx].style.zIndex = "1";
+        }
+
+        function nextImage() {
+            index = (index + 1) % images.length;
+            showImage(index);
+        }
+
+        setInterval(nextImage, 3000);
+
+        function renderPayPalButton() {
+            if (typeof paypal === "undefined") {
+                console.error("PayPal SDK not loaded.");
+                return;
+            }
+            document.getElementById('paypal-button-container').innerHTML = "";
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    let amount = document.getElementById("amount").value || '10.00';
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: amount,
+                                currency_code: "GBP" // Set currency to GBP
+                            }
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        alert('Transaction completed by ' + details.payer.name.given_name);
+                    });
+                }
+            }).render('#paypal-button-container');
+        }
+        
+        document.getElementById("amount").addEventListener("input", renderPayPalButton);
+    </script>
+</body>
+</html>
